@@ -1,0 +1,584 @@
+```{r}
+library(wordcloud2)
+wordcloud2(demoFreq, size = 1,shape = 'star')
+```
+
+```{r}
+# cleaning up and getting word frequencies
+library(janeaustenr)
+library(dplyr)
+library(stringr)
+
+original_books <- austen_books() %>%
+  group_by(book) %>%
+  mutate(linenumber = row_number(),
+         chapter = cumsum(str_detect(text, 
+                                     regex("^chapter [\\divxlc]",
+                                           ignore_case = TRUE)))) %>%
+  ungroup()
+
+original_books
+
+library(tidytext)
+
+text_df %>%
+  unnest_tokens(word, text)
+
+library(tidytext)
+tidy_books <- original_books %>%
+  unnest_tokens(word, text)
+
+tidy_books
+
+tidy_books %>%
+  count(word, sort = TRUE) 
+
+```
+
+```{r}
+counted_books <- tidy_books %>%
+  count(word, sort = TRUE) 
+
+wordcloud2(counted_books, size = 1,shape = 'star')
+
+```
+
+```{r}
+data(stop_words)
+
+tidy_books <- tidy_books %>%
+  anti_join(stop_words)
+
+tidy_books
+```
+
+```{r}
+counted_books <- tidy_books %>%
+  count(word, sort = TRUE) 
+wordcloud2(counted_books, size = 1,shape = 'star')
+
+```
+
+```{r}
+wordcloud2(demoFreq, size = 2, minRotation = -pi/2, maxRotation = 0)
+
+```
+
+```{r}
+wordcloud2(demoFreq, size = 2, minRotation = -pi/2, maxRotation = -pi/2)
+
+```
+
+```{r}
+wordcloud2(demoFreq, size = 2, minRotation = pi/2, maxRotation = pi/2)
+
+
+```
+
+```{r}
+
+wordcloud2(demoFreq, size = 2, minRotation = pi/2, maxRotation = pi/2, color=rep_len( c("grey","yellow", "green", "pink", "violet", "orange", "aquamarine"), nrow(demoFreq) )
+
+```
+
+```{r}
+wordcloud2(demoFreq, size = 2, minRotation = pi/2, maxRotation = pi/2, color=rep_len( c("grey","yellow", "green", "pink", "violet", "orange", "aquamarine"), nrow(demoFreq) ) )
+
+```
+
+```{r}
+wordcloud2(demoFreq, size=1.6, color=rep_len( c("green","blue"), nrow(demoFreq) ) )
+
+```
+
+```{r}
+wordcloud2(demoFreq, size=1.6, color='random-light', backgroundColor="black")
+
+```
+
+```{r}
+wordcloud2(demoFreq, size=1.6, color=rep_len( c("grey","yellow", "green", "pink", "violet", "orange", "aquamarine"), nrow(demoFreq) ) )
+
+```
+
+```{r}
+wordcloud2(demoFreq, color=rep_len( c("grey","yellow", "green", "pink", "blueviolet", "orange", "aquamarine"), nrow(demoFreq) ) )
+
+```
+
+```{r}
+wordcloud2(demoFreq, color=rep_len( c("grey","yellow", "green", "pink", "blueviolet", "orange", "aquamarine"), nrow(demoFreq) ) )
+
+```
+
+```{r}
+wordcloud2(demoFreq, size = 2, minRotation = pi/2, maxRotation = pi/2, color=rep_len( c("grey","yellow", "green", "pink", "blueviolet", "orange", "aquamarine"), nrow(demoFreq) ))
+```
+
+
+```{r}
+# realized the output will never be quite as close to the assignment as I would like
+# It was most probably made with an older library instead
+
+library(wordcloud)
+wordcloud(c(letters, LETTERS, 0:9), seq(1, 1000, len = 62))
+
+```
+
+```{r}
+wordcloud(
+"Many years ago the great British explorer George Mallory, who 
+was to die on Mount Everest, was asked why did he want to climb 
+it. He said, \"Because it is there.\"
+
+Well, space is there, and we're going to climb it, and the 
+moon and the planets are there, and new hopes for knowledge 
+and peace are there. And, therefore, as we set sail we ask 
+God's blessing on the most hazardous and dangerous and greatest 
+adventure on which man has ever embarked.",
+	,random.order=FALSE)
+
+```
+
+```{r}
+data(crude)
+crude <- tm_map(crude, removePunctuation)
+crude <- tm_map(crude, function(x)removeWords(x,stopwords()))
+
+##### 			from corpus 		#####
+wordcloud(crude)
+
+
+##### 		from frequency counts 	#####
+tdm <- TermDocumentMatrix(crude)
+m <- as.matrix(tdm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+
+wordcloud(d$word,d$freq)
+
+#A bigger cloud with a minimum frequency of 2
+wordcloud(d$word,d$freq,c(8,.3),2)
+
+#Now lets try it with frequent words plotted first
+wordcloud(d$word,d$freq,c(8,.5),2,,FALSE,.1)
+```
+
+```{r}
+library(tm)
+```
+
+```{r}
+data(crude)
+crude <- tm_map(crude, removePunctuation)
+crude <- tm_map(crude, function(x)removeWords(x,stopwords()))
+
+##### 			from corpus 		#####
+wordcloud(crude)
+
+
+##### 		from frequency counts 	#####
+tdm <- TermDocumentMatrix(crude)
+m <- as.matrix(tdm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+
+wordcloud(d$word,d$freq)
+
+#A bigger cloud with a minimum frequency of 2
+wordcloud(d$word,d$freq,c(8,.3),2)
+
+#Now lets try it with frequent words plotted first
+wordcloud(d$word,d$freq,c(8,.5),2,,FALSE,.1)
+```
+
+```{r}
+pal <- brewer.pal(9,"BuGn")
+pal <- pal[-(1:4)]
+wordcloud(d$word,d$freq,c(8,.3),2,,FALSE,,.15,pal)
+
+
+pal <- brewer.pal(6,"Dark2")
+pal <- pal[-(1)]
+wordcloud(d$word,d$freq,c(8,.3),2,,TRUE,,.15,pal)
+
+#random colors
+wordcloud(d$word,d$freq,c(8,.3),2,,TRUE,TRUE,.15,pal)
+```
+
+```{r}
+wordcloud(d$word,d$freq,c(8,.3),2,,TRUE,,.15,pal,
+    vfont=c("gothic english","plain"))
+
+wordcloud(d$word,d$freq,c(8,.3),2,100,TRUE,,.15,pal,vfont=c("script","plain"))
+
+wordcloud(d$word,d$freq,c(8,.3),2,100,TRUE,,.15,pal,vfont=c("serif","plain"))
+```
+
+```{r}
+library(readr)
+mystring <- read_file("/Users/tapatun/drawdown.txt")
+mystring
+```
+
+```{r}
+wordcloud(mystring)
+```
+
+```{r}
+crude # Corpus object
+```
+
+```{r}
+library(tm)
+df<-read.csv("/Users/tapatun/drawdown.txt")
+
+corpus<-Corpus(VectorSource(df$text))
+corpus
+```
+
+```{r}
+df$text
+```
+
+```{r}
+corpus<-Corpus(VectorSource(df))
+corpus
+```
+
+```{r}
+corpus <- tm_map(corpus, removePunctuation)
+corpus <- tm_map(corpus, function(x)removeWords(x,stopwords()))
+
+##### 		from frequency counts 	#####
+tdm <- TermDocumentMatrix(corpus)
+m <- as.matrix(tdm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+
+#Now lets try it with frequent words plotted first
+wordcloud(d$word,d$freq,c(8,.5),2,,FALSE,.1)
+```
+
+```{r}
+d$freq
+```
+
+
+```{r}
+wordcloud(d$word,d$freq,c(8,.5),100,,FALSE,.1)
+
+```
+
+```{r}
+stopwords()
+```
+
+
+```{r}
+wordcloud(d$word, d$freq, scale=c(4,.5), min.freq=100, random.order=FALSE)
+
+```
+
+
+```{r}
+wordcloud(d$word, d$freq, scale=c(4,.5), min.freq=100, random.order=FALSE, rot.per=.3)
+
+```
+
+
+```{r}
+wordcloud(d$word, d$freq, scale=c(4,.5), min.freq=100, random.order=FALSE, rot.per=.4)
+
+```
+
+
+```{r}
+wordcloud(d$word, d$freq, scale=c(4,.5), min.freq=100, random.order=FALSE, rot.per=.4, use.r.layout=TRUE)
+
+```
+
+
+```{r}
+wordcloud(d$word, d$freq, scale=c(4,.5), min.freq=100, random.order=FALSE, rot.per=.4, use.r.layout=TRUE, pal)
+
+```
+
+
+```{r}
+wordcloud(d$word,d$freq,c(8,.3),100,,FALSE,,.15,pal)
+
+```
+
+
+```{r}
+pal <- brewer.pal(6,"Dark2")
+
+wordcloud(d$word,d$freq,c(8,.3),100,,FALSE,,.15,pal)
+
+```
+
+
+```{r}
+pal
+```
+
+
+```{r}
+typeof(pal)
+```
+
+
+```{r}
+class(pal)
+```
+
+
+```{r}
+pal[0]
+```
+
+
+```{r}
+str(pal)
+```
+
+
+```{r}
+# In retrospective, everything below is a little dumb because I could have just specified 8 instead of 6 for pal() generator above
+pal <- c("#808080 ",pal) # extra space
+pal
+```
+
+
+```{r}
+wordcloud(d$word,d$freq,c(8,.3),100,,FALSE,,.15,pal)
+
+```
+
+
+```{r}
+pal <- brewer.pal(6,"Dark2")
+pal <- c("#808080",pal)
+wordcloud(d$word,d$freq,c(8,.3),100,,FALSE,,.15,pal)
+
+```
+
+
+```{r}
+pal <- brewer.pal(6,"Dark2")
+pal <- c(pal, "#808080")
+wordcloud(d$word,d$freq,c(8,.3),100,,FALSE,,.15,pal)
+```
+
+
+```{r}
+wordcloud(d$word,d$freq,c(8,.3),100,,FALSE,,.8,pal)
+
+```
+
+
+```{r}
+wordcloud(d$word,d$freq,c(8,.3),10,,TRUE,,.8,pal)
+
+```
+
+
+```{r}
+wordcloud(d$word,d$freq,c(8,.3),40,,FALSE,,.3,pal)
+
+```
+
+
+```{r}
+wordcloud(d$word,d$freq,c(8,.3),4,,FALSE,,.3,pal)
+
+
+```
+
+```{r}
+wordcloud(d$word, d$freq, scale=c(4,.5), min.freq=100, random.order=FALSE, rot.per=.4, ordered.colors=pal)
+
+```
+
+```{r}
+wordcloud(d$word, d$freq, scale=c(4,.5), min.freq=100, random.order=FALSE, rot.per=.4, colors=pal)
+
+
+```
+
+```{r}
+wordcloud(d$word, d$freq, scale=c(4,.5), min.freq=1000, random.order=FALSE, rot.per=.4, colors=pal)
+
+
+```
+
+```{r}
+wordcloud(d$word, d$freq, scale=c(4,.5), max.words=50, random.order=FALSE, rot.per=.4, colors=pal)
+```
+
+```{r}
+wordcloud(d$word, d$freq, scale=c(4,.5), max.words=200, random.order=FALSE, rot.per=.4, colors=pal)
+
+
+```
+
+```{r}
+wordcloud(d$word, d$freq, scale=c(4,.5), max.words=150, random.order=FALSE, rot.per=.4, colors=pal)
+
+```
+
+```{r}
+
+df<-read.csv("/Users/tapatun/drawdown.txt")
+
+corpus <- Corpus(VectorSource(df))
+corpus <- tm_map(corpus, removePunctuation)
+corpus <- tm_map(corpus, removeWords, new_stopwords)
+
+corpus <- tm_map(corpus, c(stopwords("english"),"ttttt"))
+
+##### 		from frequency counts 	#####
+tdm <- TermDocumentMatrix(corpus)
+m <- as.matrix(tdm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+
+#Now lets try it with frequent words plotted first
+wordcloud(d$word, d$freq, scale=c(4,.5), max.words=150, random.order=FALSE, rot.per=.4, colors=pal)
+
+```
+
+```{r}
+
+new_stopwords = c(stopwords("english"),"can","energy", "carbon", "percent", "emissions", "one", "will", "word", "water")
+new_stopwords
+```
+
+```{r}
+
+df <- read.csv("/Users/tapatun/drawdown.txt")
+
+corpus <- Corpus(VectorSource(df))
+corpus <- tm_map(corpus, removePunctuation)
+corpus <- tm_map(corpus, removeWords, new_stopwords)
+
+##### 		from frequency counts 	#####
+tdm <- TermDocumentMatrix(corpus)
+m <- as.matrix(tdm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+
+#Now lets try it with frequent words plotted first
+wordcloud(d$word, d$freq, scale=c(4,.5), max.words=150, random.order=FALSE, rot.per=.4, colors=pal)
+
+```
+
+```{r}
+head(d) # why is "the" still there
+
+```
+
+```{r}
+df<-read.csv("/Users/tapatun/drawdown.txt")
+
+corpus <- Corpus(VectorSource(df))
+corpus <- tm_map(corpus, content_transformer(tolower))
+corpus <- tm_map(corpus, removeWords, c(stopwords("english"),"tttttt", "ttttt"))
+corpus <- tm_map(corpus, removePunctuation)
+
+
+##### 		from frequency counts 	#####
+tdm <- TermDocumentMatrix(corpus)
+m <- as.matrix(tdm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+head(d)
+```
+
+```{r}
+head(d[!(d$word=="tttttt"),]) # no idea where this is coming from
+```
+
+```{r}
+d <- d[!(d$word=="tttttt"),] 
+
+```
+
+```{r}
+
+# SOLUTION TO 1
+
+library(tm)
+library(readr)
+library(wordcloud)
+
+pal <- brewer.pal(6,"Dark2")
+pal <- c(pal, "#808080")
+
+df<-read.csv("/Users/tapatun/drawdown.txt")
+
+corpus <- Corpus(VectorSource(df)) # too lazy to change the below to piping %>%
+corpus <- tm_map(corpus, content_transformer(tolower))
+corpus <- tm_map(corpus, removeWords, stopwords("english"))
+corpus <- tm_map(corpus, removePunctuation)
+
+
+##### 		from frequency counts 	#####
+tdm <- TermDocumentMatrix(corpus)
+m <- as.matrix(tdm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+
+d <- d[!(d$word=="tttttt"),]
+
+#Now lets try it with frequent words plotted first
+wordcloud(d$word, d$freq, scale=c(4,.5), max.words=150, random.order=FALSE, rot.per=.4, colors=pal)
+
+```
+
+```{r}
+# SOLUTION TO 2
+
+new_stopwords = c(stopwords("english"),"can","energy", "carbon", "percent", "emissions", "one", "will", "word", "water")
+
+pal <- brewer.pal(6,"Dark2")
+pal <- c(pal, "#808080")
+
+df<-read.csv("/Users/tapatun/drawdown.txt")
+
+corpus <- Corpus(VectorSource(df))
+corpus <- tm_map(corpus, content_transformer(tolower))
+corpus <- tm_map(corpus, removeWords, new_stopwords)
+corpus <- tm_map(corpus, removePunctuation)
+
+
+##### 		from frequency counts 	#####
+tdm <- TermDocumentMatrix(corpus)
+m <- as.matrix(tdm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+
+d <- d[!(d$word=="tttttt"),]
+
+#Now lets try it with frequent words plotted first
+wordcloud(d$word, d$freq, scale=c(4,.5), max.words=150, random.order=FALSE, rot.per=.4, colors=pal)
+```
+
+```{r}
+#SOLUTION TO 3
+
+library(wordcloud2)
+wc <- wordcloud2(head(d, 100), size = 0.2, shape = 'star')
+wc
+```
+
+```{r}
+
+# https://towardsdatascience.com/create-a-word-cloud-with-r-bde3e7422e8a
+# If I have paid attention to this earlier, would have made everything so much quicker
+# I'm like 90% sure you guys based the experiment on this article lol
+# In real life scenario, I would probably throw out the above and just use the code from there directly now,
+# but you're more concerned about the journey here so here goes.
+
+```
