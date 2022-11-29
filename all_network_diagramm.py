@@ -1,17 +1,16 @@
-# from matplotlib.sankey import Sankey
 import networkx as nx
+from random import randrange
 import math
 import os
 import pandas as pd
 from urllib.parse import urlparse
-import holoviews as hv
-from holoviews import opts, dim
 from bokeh.plotting import show, figure, from_networkx
-from bokeh.models import Ellipse, GraphRenderer, StaticLayoutProvider, Legend, Renderer
-from bokeh.models import (BoxSelectTool, Circle, EdgesAndLinkedNodes, HoverTool,
-                                                    MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool)
+from bokeh.models import Ellipse, GraphRenderer, StaticLayoutProvider, Legend, Renderer, LegendItem
+from bokeh.models import (BoxSelectTool, Circle, EdgesAndLinkedNodes, HoverTool, MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool)
 from bokeh.palettes import Spectral8, inferno, viridis, Spectral4
-hv.extension('bokeh')
+
+
+TOOLS = "pan,wheel_zoom,box_zoom,reset,save,box_select,hover"
 
 
 def reduce_(item, next):
@@ -44,9 +43,18 @@ if __name__ == "__main__":
     frames = []
     figures = []
     website_color = {}
-    chords = []
-    sankeys = []
-    networks = []
+    figure_ = figure(
+        title="Graph Layout Demonstration",
+        x_range=(-2.1,2.1),
+        y_range=(-2.1,2.1),
+        height=1000,
+        width=1500,
+        tools=TOOLS,
+        tooltips=[
+            ("Info:", "@start"),
+        ],
+    )
+    figure_.grid.grid_line_color = None
 
     for file in os.listdir():
         if len(file.split('.')) == 2 and file.split('.')[1] == 'csv':
@@ -84,55 +92,41 @@ if __name__ == "__main__":
             for edge in sources_targets.itertuples():
                 graph_nx.add_edge(edge.source, edge.target)
 
-            time_spend = data_frame[['Web_site', 'time_spend']].dropna()
-            time_spend = time_spend.groupby(['Web_site'], as_index=False).sum()
-            total_time = sum(time_spend['time_spend'])
-            time_spend = pd.DataFrame(time_spend)
-            time_spend['Percentage'] = time_spend['time_spend'] / total_time * 100
-            time_spend['Start'] = f'Total time: {total_time:.2f}'
-            time_spend['color'] = '#ffffff'
-            sankey = hv.Sankey(time_spend[['Start', 'Web_site', 'Percentage']])
-            sankey.opts(
-                title=f'Sankey-{file.split(".")[0]}',
-                label_position='left',
-                edge_color='Start',
-                node_color='index',
+            graph = from_networkx(graph_nx, nx.spring_layout, scale=1.8, center=(0,0),)
+            graph.name = file.split('.')[0]
+
+            def get_random_hex():
+                return hex(randrange(17, 255))[2:].upper()
+
+            color_participent = f'#{get_random_hex()}{get_random_hex()}{get_random_hex()}'
+
+            graph.node_renderer.glyph = Circle(size=15, fill_color=color_participent)
+            graph.node_renderer.selection_glyph = Circle(size=15, fill_color=color_participent)
+            graph.node_renderer.hover_glyph = Circle(size=25, fill_color=color_participent)
+
+            graph.edge_renderer.glyph = MultiLine(line_color=color_participent, line_alpha=0.8, line_width=5)
+            graph.edge_renderer.selection_glyph = MultiLine(line_color=Spectral4[2], line_alpha=1, line_width=5)
+            graph.edge_renderer.hover_glyph = MultiLine(line_color=Spectral4[1], line_width=5)
+
+            graph.selection_policy = NodesAndLinkedEdges()
+            graph.inspection_policy = EdgesAndLinkedNodes()
+
+            figure_.renderers.append(graph)
+
+    legend = Legend(
+        items=[
+            LegendItem(
+                label=renderer.name,
+                renderers=[renderer.node_renderer, renderer.edge_renderer],
+                index=index,
             )
-            colors = ['#000000'] + hv.Cycle('Category20').values
-            graph = hv.Graph.from_networkx(graph_nx, nx.layout.random_layout).opts(
-                title=f'Network-{file.split(".")[0]}',
-                node_color=dim('index').str(),
-                tools=['hover'],
-                node_size=20,
-                edge_line_width=1,
-                node_line_color='gray',
-                height=1000,
-                width=1000,
-                show_frame=False,
-                xaxis=None,
-                yaxis=None,
-                cmap='Category20',
-            )
-            counts = sources_targets.groupby(['source', 'target']).count().reset_index()
-            nodes = hv.Dataset(sources_targets[['source', 'target']])
-            chord = hv.Chord((counts, nodes), ['source', 'target']).opts(
-                title=f'Chord-Diagram-{file.split(".")[0]}',
-                tools=['hover'],
-                edge_color=dim('target').str(),
-                node_color='white',
-                labels='target',
-                height=1000,
-                width=1000,
-                show_frame=True,
-                xaxis=None,
-                yaxis=None,
-                cmap='Category20',
-                edge_cmap='Category20',
-            )
-            renderer = hv.renderer('bokeh')
-            renderer.save(sankey, f'sankey-{file.split(".")[0]}')
-            renderer.save(graph, f'network-{file.split(".")[0]}')
-            renderer.save(chord, f'chord-{file.split(".")[0]}')
-            sankeys.append(sankey)
-            chords.append(chord)
-            networks.append(graph)
+            for index, renderer in enumerate(figure_.renderers)
+        ]
+    )
+    figure_.add_layout(legend, 'right')
+    figure_.legend.click_policy = 'hide'
+    figure_.legend.location = 'right'
+    figure_.legend.orientation = 'vertical'
+    figure_.legend.background_fill_alpha=.6
+    figure_.output_backend = 'svg'
+    show(figure_)

@@ -1,16 +1,10 @@
-# from matplotlib.sankey import Sankey
 import networkx as nx
 import math
 import os
 import pandas as pd
 from urllib.parse import urlparse
 import holoviews as hv
-from holoviews import opts, dim
-# from bokeh.plotting import show, figure, from_networkx
-# from bokeh.models import Ellipse, GraphRenderer, StaticLayoutProvider, Legend
-# from bokeh.models import (BoxSelectTool, Circle, EdgesAndLinkedNodes, HoverTool,
-#                                                     MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool)
-# from bokeh.palettes import Spectral8, inferno, viridis, Spectral4
+from holoviews import opts, dim 
 hv.extension('bokeh')
 
 def reduce_(item, next):
@@ -26,6 +20,7 @@ def calculate_time_spends(data_frame):
 
     return time_spend
 
+#netloc: 'docs.python.org:80'
 def get_network_location(url):
     components = urlparse(url)
     if components.scheme == 'https' or components.scheme == 'http':
@@ -37,17 +32,18 @@ if __name__ == "__main__":
     figures = []
     website_color = {}
 
-
     for file in os.listdir():
         if len(file.split('.')) == 2 and file.split('.')[1] == 'csv':
             data_frame = pd.read_csv(file)
             data_frame['Web_site'] = data_frame['Tab_URL'].apply(get_network_location)
             time_spend = calculate_time_spends(data_frame)
             data_frame['time_spend'] = pd.Series(time_spend)
+            #Wiedergabe übertragung
             renderer = hv.renderer('bokeh')
             data_frame = data_frame[['Web_site', 'time_spend']].dropna()
             data_frame = data_frame.reindex(range(len(data_frame)))
             sources_targets = []
+            #Set : ungeordnet
             sites_visited = {}
 
             for index, item in enumerate(data_frame.itertuples()):
@@ -88,7 +84,7 @@ if __name__ == "__main__":
             sources_targets = sources_targets.rename(
                 columns={0: 'source', 1: 'target', 2: 'value',},
             )
-            print(sources_targets)
+            #print(sources_targets)
             sankey = hv.Sankey(sources_targets)
             sankey.opts(
                 label_position='left',
