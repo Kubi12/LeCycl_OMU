@@ -105,5 +105,5 @@ if __name__ == "__main__":
                     'bgcolor': 'black',
                 },
             )
-            
+
             fig.show()
