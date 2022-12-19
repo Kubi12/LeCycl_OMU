@@ -1,5 +1,6 @@
 # from matplotlib.sankey import Sankey
 import networkx as nx
+from datetime import timedelta
 import math
 import os
 import pandas as pd
@@ -54,13 +55,18 @@ def get_network_location(url):
 
 
 if __name__ == "__main__":
-    os.chdir(os.getcwd() + os.sep + 'Datenanalyse/Persona')
-    #os.chdir(os.getcwd() + os.sep + 'Persona')
+    #os.chdir(os.getcwd() + os.sep + 'Datenanalyse/Persona')
+    os.chdir(os.getcwd() + os.sep + 'Persona')
     frames = []
     website_color = {}
     chords = []
     sankeys = []
     networks = []
+    cutoff_time_spend = int(
+        input(
+            'Max time spend in one session in minutes: '
+        )
+    )
 
     for file in os.listdir():
         if len(file.split('.')) == 2 and file.split('.')[1] == 'csv':
@@ -69,7 +75,10 @@ if __name__ == "__main__":
                 get_network_location)
             time_spend = calculate_time_spends(data_frame)
             data_frame['time_spend'] = pd.Series(time_spend)
-            data_frame = data_frame[data_frame.time_spend < 480]
+            data_frame = data_frame[data_frame.time_spend < cutoff_time_spend]
+            # data_frame['time_spend'] = data_frame['time_spend'].apply(
+            #     lambda x: min(x, cutoff_time_spend)
+            # )
             data_frame = data_frame.reset_index()
             sources_targets = []
             for index, item in enumerate(data_frame.itertuples()):
@@ -154,10 +163,14 @@ if __name__ == "__main__":
 
     all_frames = pd.concat(frames)
     total_time = sum(all_frames['time_spend'])
-    all_frames['Start'] = f'Total time: {total_time/60:.2f}h'
     all_frames['Percentage'] = all_frames['time_spend'] / total_time * 100
-    all_frames['Time spend in min'] = all_frames['time_spend']
-    cut_off = float(input('The cut-off percentage fo each website: '))
+    total_time = timedelta(seconds=int(total_time*60))
+    all_frames['Start'] = f'Total time: {total_time}'
+    all_frames['timedelta'] = all_frames['time_spend'].apply(
+        lambda x: str(timedelta(seconds=int(x*60))),
+    )
+    cut_off = float(input('The cut-off duration to each website in min: '))
+    cut_off = (cut_off * 60) / total_time.total_seconds() * 100
     filtered_all_frames = all_frames[all_frames.Percentage > cut_off]
     print('Total percentage:', sum(filtered_all_frames['Percentage']))
     sankey = hv.Sankey(
@@ -166,18 +179,56 @@ if __name__ == "__main__":
                 'Start',
                 'Web_site',
                 'Percentage',
-                'Time spend in min',
+                'timedelta',
                 'Participent',
             ]
         ]
+    )
+    hover_tool = HoverTool(
+        tooltips=[
+            ('Website', '@Web_site'),
+            ('Participent', '@Participent'),
+            ('Time spend', '@timedelta'),
+            ('Percentage', '@Percentage%'),
+        ],
     )
     sankey.opts(
         title=f'Sankey-all',
         label_position='left',
         edge_color='Start',
         node_color='index',
+        tools=[hover_tool],
         width=1500,
         height=1000,
     )
     renderer = hv.renderer('bokeh')
     renderer.save(sankey, f'sankey-all')
+    sankey_ = hv.Sankey(
+        filtered_all_frames[
+            [
+                'Participent',
+                'Web_site',
+                'Percentage',
+                'timedelta',
+            ]
+        ]
+    )
+    hover_tool = HoverTool(
+        tooltips=[
+            ('Website', '@Web_site'),
+            ('Participent', '@Participent'),
+            ('Time spend', '@timedelta'),
+            ('Percentage', '@Percentage%'),
+        ],
+    )
+    sankey_.opts(
+        title=f'Sankey-all',
+        label_position='left',
+        edge_color='Participent',
+        node_color='index',
+        tools=[hover_tool],
+        width=1500,
+        height=1000,
+    )
+    renderer = hv.renderer('bokeh')
+    renderer.save(sankey + sankey_, f'sankey-all-particpents')

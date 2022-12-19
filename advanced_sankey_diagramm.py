@@ -26,8 +26,8 @@ def get_network_location(url):
 
 
 if __name__ == "__main__":
-    os.chdir(os.getcwd() + os.sep + 'Datenanalyse/Persona')
-    #os.chdir(os.getcwd() + os.sep + 'Persona')
+    #os.chdir(os.getcwd() + os.sep + 'Datenanalyse/Persona')
+    os.chdir(os.getcwd() + os.sep + 'Persona')
     website_color = {}
 
     for file in os.listdir():

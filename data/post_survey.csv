@@ -4,7 +4,7 @@ Submit even if you didn't finish.",Copy past your code for the question one with
 If you haven't use any website type none. (Add URL here)","Could you tell me the best website you find  for task 2 that supported your answer?
 If you haven't use any website type none. (Add URL here)","Could you tell me the best website you find  for task 3 that supported your answer?
 If you haven't use any website type none. (Add URL here)",Why the website was useful?
-8/6/2022 10:58:19,nbohley@rhrk.uni-kl.de,https://drive.google.com/open?id=1TVe9ObW1WcqVVdZ8r8pH_CXon-X05GgX,"# before this I tested out different things, but cannot remember exactly what I did
+8/6/2022 10:58:19,Persona_F,https://drive.google.com/open?id=1TVe9ObW1WcqVVdZ8r8pH_CXon-X05GgX,"# before this I tested out different things, but cannot remember exactly what I did
 # (it included exploration of how R words (in the VScode terminal, as it is a pain to 
 # always do mark -> run selected), also I first wanted to do the calculations by myself
 # before I just gave in and used the tools I found) (for using wordcloud2, I also played
@@ -130,7 +130,7 @@ set.seed(1234) # for reproducibility
 wordcloud2(df[1:150, ], size = 0.3, shape = ""star"")
 
 ",https://drive.google.com/open?id=10_H06YMp6X3qYG6qM7oyQO2QBD7SQQ5d,3,https://towardsdatascience.com/create-a-word-cloud-with-r-bde3e7422e8a,https://towardsdatascience.com/create-a-word-cloud-with-r-bde3e7422e8a,https://towardsdatascience.com/create-a-word-cloud-with-r-bde3e7422e8a,The website had a direct answer for the task.
-8/25/2022 8:34:52,cochetquen@cy-tech.fr,https://drive.google.com/open?id=1il2CXcItQg00Ctlyku-E0cBN_QXX-LrS,"#Load text
+8/25/2022 8:34:52,Persona_H,https://drive.google.com/open?id=1il2CXcItQg00Ctlyku-E0cBN_QXX-LrS,"#Load text
 txt = readLines(""drawdown.txt"")
 corpus = Corpus(VectorSource(txt))
 
@@ -199,7 +199,7 @@ d = data.frame(word = names(v),freq=v)
 
 #Cloud plot
 wordcloud2(d, size = 0.2, shape = 'star')",https://drive.google.com/open?id=1IdoMTvFaUvNk3JnHX4nO5iQJlTshgTat,5,http://www.sthda.com/french/wiki/text-mining-et-nuage-de-mots-avec-le-logiciel-r-5-etapes-simples-a-savoir,None,https://r-graph-gallery.com/196-the-wordcloud2-library.html,The website had a direct answer for the task.
-8/25/2022 9:41:16,ielbeze@gmail.com,https://drive.google.com/open?id=1sLlMgGxDShGw4d8C2ql4BHGufIs8ta5n,"install.packages(""wordcloud"")
+8/25/2022 9:41:16,Persona_D,https://drive.google.com/open?id=1sLlMgGxDShGw4d8C2ql4BHGufIs8ta5n,"install.packages(""wordcloud"")
 library(wordcloud)
 install.packages(""RColorBrewer"")
 library(RColorBrewer)
@@ -309,7 +309,7 @@ df <- data.frame(word = names(words),freq=words)
 
 df3 <- df[c(0:150),]
 wordcloud2(data=df3,size=0.2,shape='star')",https://drive.google.com/open?id=14MOymSJGeMP-3qAr49jHCpi_2GPkRFRi,4,https://towardsdatascience.com/create-a-word-cloud-with-r-bde3e7422e8a,none,https://www.rdocumentation.org/packages/wordcloud2/versions/0.2.1/topics/wordcloud2,The website had a direct answer for the task.
-8/25/2022 10:43:27,ruben.aloukou@gmail.com,https://drive.google.com/open?id=1VT6v4s0tSukV3u6rCvk1Y4pJ9YqfZ2B3,"install.packages(""RColorBrewer"")
+8/25/2022 10:43:27,Persona_G,https://drive.google.com/open?id=1VT6v4s0tSukV3u6rCvk1Y4pJ9YqfZ2B3,"install.packages(""RColorBrewer"")
 install.packages(""wordcloud"")
 install.packages(""wordcloud2"")
 install.packages(""tm"")
@@ -365,7 +365,7 @@ wordcloud(words=df$word,
           rot.per=0.35,           
           colors=brewer.pal(8, ""Dark2""))
 ",https://drive.google.com/open?id=1RcGW18oxApY3RXZe9C82cKgPa6m_QFHf,2,https://towardsdatascience.com/create-a-word-cloud-with-r-bde3e7422e8a,https://towardsdatascience.com/create-a-word-cloud-with-r-bde3e7422e8a,https://towardsdatascience.com/create-a-word-cloud-with-r-bde3e7422e8a,The website had a direct answer for the task.
-8/25/2022 10:56:43,souchaud.antoine123@gmail.com,https://drive.google.com/open?id=1HossSNawbnAPb8cETxuik9zR0mjNH7CY,"# We can use the print() function
+8/25/2022 10:56:43,Persona_A,https://drive.google.com/open?id=1HossSNawbnAPb8cETxuik9zR0mjNH7CY,"# We can use the print() function
 print(""Hello World!"")
 #[1] ""Hello World!""
 # Quotes can be suppressed in the output
@@ -496,7 +496,7 @@ df<- data.frame(names(frequency), frequency)
 wordcloud2(df, size=0.4, widgetsize=c(1000,1000))
 wordcloud2(df, size=0.1, shape=""star"", widgetsize=c(1000,1000))
 wordcloud2(df, size=0.1, shape=""diamond"", widgetsize=c(800,800))",https://drive.google.com/open?id=1w-_wNy6a-OoKvOjTSEFM8hALv5snfC16,4,Youtube.com,Youtube.com,Youtube.com,The website had a direct answer for the task.
-8/25/2022 11:18:58,feugavicto@cy-tech.fr,https://drive.google.com/open?id=1qtG3SDk4UEzUhrrkZbfPCOVcAzHndlck,"# Install
+8/25/2022 11:18:58,Persona_I,https://drive.google.com/open?id=1qtG3SDk4UEzUhrrkZbfPCOVcAzHndlck,"# Install
 install.packages(""tm"")  # for text mining
 install.packages(""SnowballC"") # for text stemming
 install.packages(""wordcloud"") # word-cloud generator 
@@ -584,7 +584,7 @@ d <- d[-c(6,11),]
 wordcloud2(data = d, shape=""star"")
 
 ",https://drive.google.com/open?id=1-I3pYKUv072LUdm2lFN8J1L3Jc3kLQpx,3,http://www.sthda.com/english/wiki/text-mining-and-word-cloud-fundamentals-in-r-5-simple-steps-you-should-know,http://www.sthda.com/english/wiki/text-mining-and-word-cloud-fundamentals-in-r-5-simple-steps-you-should-know,https://cran.r-project.org/web/packages/wordcloud2/vignettes/wordcloud.html,The website had a similar answer for the task.
-8/25/2022 13:18:09,igliyoussey@gmail.com,https://drive.google.com/open?id=1wGibyZQUcpClkyiVO9WbsPZyuNV1EXgY,"
+8/25/2022 13:18:09,Persona_J,https://drive.google.com/open?id=1wGibyZQUcpClkyiVO9WbsPZyuNV1EXgY,"
 #PACKAGES
 install.packages(""wordcloud"")
 install.packages(""RColorBrewer"")
@@ -644,7 +644,7 @@ df2 <- data.frame(word = names(words2), freq = words2)
 wordcloud(words = df2$word, freq = df2$freq,  min.freq = 1,
 max.words = 150, random.order = FALSE, rot.per = 0.35, scale=c(4,.3),
 colors = brewer.pal(8, ""Dark2""))","wordcloud2(df2, size = 0.6, shape = ""star"")",https://drive.google.com/open?id=1HwqzW39ynaRAmU7t694IH7kwjNpXYPYi,2,https://towardsdatascience.com/create-a-word-cloud-with-r-bde3e7422e8a,https://towardsdatascience.com/create-a-word-cloud-with-r-bde3e7422e8a,https://towardsdatascience.com/create-a-word-cloud-with-r-bde3e7422e8a,The website had a direct answer for the task.
-8/26/2022 16:55:08,laaouane.ikram@gmail.com,https://drive.google.com/open?id=1O0UiLxC6Op21jlMlNoBoKSmdqwmCH9ti,"install.packages(""wordcloud"")
+8/26/2022 16:55:08,Persona_C,https://drive.google.com/open?id=1O0UiLxC6Op21jlMlNoBoKSmdqwmCH9ti,"install.packages(""wordcloud"")
 library(wordcloud)
 
 
@@ -694,7 +694,7 @@ words <- sort(rowSums(matrix),decreasing=TRUE)
 df <- data.frame(word = names(words),freq=words)
 
 wordcloud(words= df$word, freq = df$freq, min.freq = 1, max.words = 200, random.order = False, rot.per = 0.35, colors = brewer.pal(2, ""Dark2""))","wordcloud2(data = df, shape = 'star')",https://drive.google.com/open?id=1irkzCtqLUivmdRTsjsJKMhTvrBbnSV_8,3,https://towardsdatascience.com/create-a-word-cloud-with-r-bde3e7422e8a,"https://datatricks.co.uk/wordclouds-in-r#:~:text=You%20can%20use%20the%20tm,the%E2%80%9D%20and%20%E2%80%9Ca%E2%80%9D.&text=In%20the%20fifth%20line%20above,%E2%80%9D%2C%20%E2%80%9Cand%E2%80%9D%20etc.","https://datatricks.co.uk/wordclouds-in-r#:~:text=You%20can%20use%20the%20tm,the%E2%80%9D%20and%20%E2%80%9Ca%E2%80%9D.&text=In%20the%20fifth%20line%20above,%E2%80%9D%2C%20%E2%80%9Cand%E2%80%9D%20etc.",The website had a direct answer for the task.
-8/31/2022 7:25:48,miguel7pardo@gmail.com,https://drive.google.com/open?id=1rWsjfzBTZGYV3HvC8sIZfWsugy1Tm-qZ,"library(wordcloud)
+8/31/2022 7:25:48,Persona_E,https://drive.google.com/open?id=1rWsjfzBTZGYV3HvC8sIZfWsugy1Tm-qZ,"library(wordcloud)
 library(RColorBrewer)
 library(wordcloud2)
 library(tm)
@@ -812,4 +812,4 @@ d <- data.frame(word = names(v), freq = v)
 
 set.seed(1234)
 wordcloud2(data = d, size = 0.3, shape = ""star"", color = ""random-dark"")",https://drive.google.com/open?id=1hBSu9e36ksDOpEeem7ebInpHCkV_Dc4f,4,http://www.sthda.com/english/wiki/text-mining-and-word-cloud-fundamentals-in-r-5-simple-steps-you-should-know,http://www.sthda.com/english/wiki/text-mining-and-word-cloud-fundamentals-in-r-5-simple-steps-you-should-know,https://towardsdatascience.com/create-a-word-cloud-with-r-bde3e7422e8a,The website had a direct answer for the task.
-9/11/2022 18:12:12,arstapatun@gmail.com,https://drive.google.com/open?id=1pvGJczksCnLP5G1D9DoMXgqcGDzM0Hec,"That's gonna be pretty hard, I did questions out of order and switched often... Take a look at the file above to see what I mean. Each time I changed code and ran it, I put it in a separate RMD chunk.",same as above,same as above,https://drive.google.com/open?id=1BzhdkiDakDZPa30wzkpB7-FcVJlLr28b,3,rdocumentation.org,stackoverflow.com,stackoverflow.com,The website had a similar answer for the task.
+9/11/2022 18:12:12,Persona_B,https://drive.google.com/open?id=1pvGJczksCnLP5G1D9DoMXgqcGDzM0Hec,"That's gonna be pretty hard, I did questions out of order and switched often... Take a look at the file above to see what I mean. Each time I changed code and ran it, I put it in a separate RMD chunk.",same as above,same as above,https://drive.google.com/open?id=1BzhdkiDakDZPa30wzkpB7-FcVJlLr28b,3,rdocumentation.org,stackoverflow.com,stackoverflow.com,The website had a similar answer for the task.
