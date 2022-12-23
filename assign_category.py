@@ -56,12 +56,10 @@ def assign_category():
 if __name__ == '__main__':
     current_directory = os.getcwd()
     os.chdir(os.path.join(current_directory, 'Categorization'))
-     
-     # For the control, that webpages are not commen 2 times.
     websites_categorized = set()
     json_files_done = [
         'Q&A_websites.json',
-        #'not_task_relateds.json',
+        'not_task_relateds.json',
         'search_engines.json',
         'technical_blogs.json',
         'linguistics_websites.json',

@@ -1,4 +1,3 @@
-# from matplotlib.sankey import Sankey
 from collections import Counter
 from random import randrange
 import networkx as nx
@@ -31,8 +30,8 @@ def get_network_location(url):
         return components.netloc
 
 if __name__ == "__main__":
-    os.chdir(os.getcwd() + os.sep + 'Datenanalyse/Persona')
-    #os.chdir(os.getcwd() + os.sep + 'Persona')
+    # os.chdir(os.getcwd() + os.sep + 'Datenanalyse/Persona')
+    os.chdir(os.getcwd() + os.sep + 'Persona')
     frames = []
     figures = []
     website_color = {}
@@ -138,6 +137,7 @@ if __name__ == "__main__":
                     source, target = renderer.name.split('>')
                     try:
                         renderer_groups[source].append(renderer)
+                        renderer_groups[target].append(renderer)
                     except KeyError as e:
                         renderer_groups[source] = [renderer]
                 else:

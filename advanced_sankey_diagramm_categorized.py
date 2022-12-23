@@ -9,25 +9,8 @@ import holoviews as hv
 import plotly.graph_objects as go
 
 from assign_category import assign_category
-from utils import clean_website, get_category
+from utils import clean_website, calculate_time_spends, get_network_location
 from all_network_diagramm_categorized import get_sources_targets_for
-
-
-def calculate_time_spends(data_frame):
-    time_spend = []
-    actual_time = pd.to_datetime(data_frame['DateUTC'][0])
-
-    for i in range(len(data_frame)):
-        time_spend.append((pd.to_datetime(data_frame['DateUTC'][i]) - actual_time).total_seconds())
-        actual_time = pd.to_datetime(data_frame['DateUTC'][i])
-
-    return time_spend
-
-
-def get_network_location(url):
-    components = urlparse(url)
-    if components.scheme == 'https' or components.scheme == 'http':
-        return components.netloc
 
 
 if __name__ == "__main__":
@@ -49,12 +32,6 @@ if __name__ == "__main__":
                 set(sources_targets['source']) | set(sources_targets['target'])
             )
             sources, targets, values = [], [], []
-            print(
-                f'sum-time for {file}',
-                sources_targets['value'].apply(
-                    lambda x: timedelta(minutes=x)
-                )
-            )
             for index, tuple_ in enumerate(sources_targets.itertuples()):
                 sources.append(categories.index(tuple_.source))
                 targets.append(categories.index(tuple_.target))

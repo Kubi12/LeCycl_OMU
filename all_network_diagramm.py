@@ -1,48 +1,20 @@
-import functools
 from post_survey_analysis import get_usefull_websites
 from collections import Counter
 import networkx as nx
-from random import randrange
-import math
 import os
 import pandas as pd
-from urllib.parse import urlparse
 from bokeh.plotting import show, figure, from_networkx
 from bokeh.models import Ellipse, GraphRenderer, StaticLayoutProvider, Legend, Renderer, LegendItem
 from bokeh.models import (BoxSelectTool, Circle, EdgesAndLinkedNodes, HoverTool, MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool)
 from bokeh.palettes import Spectral8, inferno, viridis, Spectral4
 
 
+from utils import (
+    calculate_time_spends,
+    get_network_location,
+    get_random_color,
+)
 TOOLS = "pan,wheel_zoom,box_zoom,reset,save,box_select,hover"
-
-
-def reduce_(item, next):
-    pass
-
-# draw quadratic bezier paths
-def bezier(start, end, control, steps):
-        return [(1-s)**2*start + 2*(1-s)*s*control + s**2*end for s in steps]
-
-
-def calculate_time_spends(data_frame):
-    time_spend = []
-    actual_time = pd.to_datetime(data_frame['DateUTC'][0])
-
-    for i in range(len(data_frame)):
-        time_spend.append(
-            (
-                pd.to_datetime(data_frame['DateUTC'][i]) - actual_time
-            ).total_seconds() / 60
-        )
-        actual_time = pd.to_datetime(data_frame['DateUTC'][i])
-
-    return time_spend
-
-
-def get_network_location(url):
-    components = urlparse(url)
-    if components.scheme == 'https' or components.scheme == 'http':
-        return components.netloc
 
 
 def add_websites_most_visited(file, most_visited, current_web_site, next_web_site):
@@ -114,14 +86,6 @@ def get_sources_targets():
     return frames, visits, most_visited
 
 
-def get_random_hex():
-    return hex(randrange(17, 255))[2:].upper()
-
-
-def get_random_color():
-    return f'#{get_random_hex()}{get_random_hex()}{get_random_hex()}'
-
-
 def group_renderers(renderers):
     renderer_groups = {}
     for renderer in figure_.renderers:
@@ -184,7 +148,6 @@ def draw_edges(figure_, graph_data_frame, edges, number_visits):
 
 def get_network(sources_targets, most_common_websites):
     graph_nx = nx.DiGraph()
-
     for source in sources_targets['source'].drop_duplicates():
         if source in most_common_websites:
             graph_nx.add_node(source)
@@ -215,9 +178,8 @@ def get_most_common_website_participents(most_visited):
         website for website, frequency in common_websites_frequencies.items()
         if frequency >= cut_off
     ]
-    print(common_websites)
     return most_common_websites, common_websites_frequencies
-    
+
 
 if __name__ == "__main__":
     # os.chdir(os.getcwd() + os.sep + 'Datenanalyse/Persona')

@@ -7,32 +7,17 @@ from urllib.parse import urlparse
 from bokeh.plotting import show, figure
 from bokeh.models import Legend, LegendItem
 
-from utils import clean_website, get_category
 from assign_category import assign_category
+from utils import (
+    clean_website,
+    get_category,
+    calculate_time_spends,
+    get_network_location,
+    get_random_color,
+)
 
 
 TOOLS = "pan,wheel_zoom,box_zoom,reset,save,box_select,hover"
-
-
-def calculate_time_spends(data_frame):
-    time_spend = []
-    actual_time = pd.to_datetime(data_frame['DateUTC'][0])
-
-    for i in range(len(data_frame)):
-        time_spend.append(
-            (
-                pd.to_datetime(data_frame['DateUTC'][i]) - actual_time
-            ).total_seconds() / 60
-        )
-        actual_time = pd.to_datetime(data_frame['DateUTC'][i])
-
-    return time_spend
-
-
-def get_network_location(url):
-    components = urlparse(url)
-    if components.scheme == 'https' or components.scheme == 'http':
-        return components.netloc
 
 
 def add_category_most_visited(file, most_visited, current_category, next_category):
@@ -114,14 +99,6 @@ def get_sources_targets(websites_categories):
                 )
             )
     return frames, visits, most_visited
-
-
-def get_random_hex():
-    return hex(randrange(17, 255))[2:].upper()
-
-
-def get_random_color():
-    return f'#{get_random_hex()}{get_random_hex()}{get_random_hex()}'
 
 
 def group_renderers(renderers):
