@@ -15,3 +15,7 @@ all_network_diagramm.html
 I gave the cutoff for, that the perspn can spend most 120 minutes and he/she has to be on this page ar least 10 minutes. But with this I have only 
 81% of the data. If you want to see 100%, its max:1000000.. and 0.
 #network_digramm_categorized.py: sankey-all-categorized.html, the same as network_diagramm.py but with categories.
+
+#post_survey_analysis.py: sankey-usefull_websites.html, 3 tasks, which pages was usefull.
+
+Persona/Personas.docx: Names and emailadresses from the personas.
