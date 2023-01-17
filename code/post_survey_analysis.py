@@ -43,7 +43,7 @@ def get_usefull_websites_participents(post_survey):
     usefull_websites = []
     for task in range(1, 4):
         task_ = f'''Could you tell me the best website you find  for task {task} that supported your answer?\nIf you haven\'t use any website type none. (Add URL here)'''
-        data = post_survey[ [task_,'メールアドレス',] ]
+        data = post_survey[[task_, 'メールアドレス',]]
         data = data.rename(
             columns={
                 task_: 'website',
@@ -107,18 +107,18 @@ def create_visualisation_with_participents(usefull_websites, with_task=True):
     if with_task:
         to_visualise['Start'] = pd.concat(
             [usefull_websites['Task'],
-            usefull_websites['website']],
+             usefull_websites['website']],
             ignore_index=True,
         )
     else:
         to_visualise['Start'] = pd.concat(
             [usefull_websites['Start'],
-            usefull_websites['website']],
+             usefull_websites['website']],
             ignore_index=True,
         )
     to_visualise['End'] = pd.concat(
         [usefull_websites['website'],
-        usefull_websites['participent']],
+         usefull_websites['participent']],
         ignore_index=True,
     )
     to_visualise['dummy'] = 1

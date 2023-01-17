@@ -22,11 +22,14 @@ if __name__ == "__main__":
     for file in os.listdir():
         if len(file.split('.')) == 2 and file.split('.')[1] == 'csv':
             data_frame = pd.read_csv(file)
-            data_frame['Web_site'] = data_frame['Tab_URL'].apply(get_network_location)
-            data_frame['Web_site'] = data_frame['Web_site'].apply(clean_website)
+            data_frame['Web_site'] = data_frame['Tab_URL'].apply(
+                get_network_location)
+            data_frame['Web_site'] = data_frame['Web_site'].apply(
+                clean_website)
             time_spend = calculate_time_spends(data_frame)
             data_frame['time_spend'] = pd.Series(time_spend)
-            sources_targets = get_sources_targets_for(file, [], {}, websites_categories)
+            sources_targets = get_sources_targets_for(
+                file, [], {}, websites_categories)
             categories = []
             categories = list(
                 set(sources_targets['source']) | set(sources_targets['target'])
@@ -39,14 +42,14 @@ if __name__ == "__main__":
             num_categories = list(set(categories))
             fig = go.Figure(go.Sankey(
                 name=f'{file.split(".")[0]}-Sankey',
-                arrangement = "fixed",
-                node = {
+                arrangement="fixed",
+                node={
                     "label": categories,
                     "x": np.linspace(1/8, 7/8, num=len(num_categories)),
                     'y': np.linspace(1/8, 7/8, num=len(num_categories)),
                     'pad': 10,
                 },
-                link = {
+                link={
                     "source": sources,
                     "target": targets,
                     "value": values,
@@ -71,6 +74,6 @@ if __name__ == "__main__":
             )
             fig.show(
                 config=dict(
-                    {'scrollZoom': True,'displayModeBar': True}
+                    {'scrollZoom': True, 'displayModeBar': True}
                 )
             )

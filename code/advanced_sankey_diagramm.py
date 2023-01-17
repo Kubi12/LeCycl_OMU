@@ -12,14 +12,15 @@ from utils import calculate_time_spends, get_network_location
 
 
 if __name__ == "__main__":
-    #os.chdir(os.getcwd() + os.sep + 'Datenanalyse/Persona')
+    # os.chdir(os.getcwd() + os.sep + 'Datenanalyse/Persona')
     os.chdir(os.getcwd() + os.sep + 'Persona')
     website_color = {}
 
     for file in os.listdir():
         if len(file.split('.')) == 2 and file.split('.')[1] == 'csv':
             data_frame = pd.read_csv(file)
-            data_frame['Web_site'] = data_frame['Tab_URL'].apply(get_network_location)
+            data_frame['Web_site'] = data_frame['Tab_URL'].apply(
+                get_network_location)
             time_spend = calculate_time_spends(data_frame)
             data_frame['time_spend'] = pd.Series(time_spend)
             sources_targets = get_sources_targets_for(file, [], {})
@@ -37,15 +38,15 @@ if __name__ == "__main__":
 
             fig = go.Figure(go.Sankey(
                 name=f'{file.split(".")[0]}-Sankey',
-                arrangement = "fixed",
-                node = {
+                arrangement="fixed",
+                node={
                     "label": websites,
                     "x": np.linspace(0, 1, len(websites)),
                     'y': np.linspace(1/4, 3/4, len(websites)),
                     'pad': 20,
                     'thickness': 5,
                 },
-                link = {
+                link={
                     "source": sources,
                     "target": targets,
                     "value": values,

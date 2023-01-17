@@ -1,3 +1,10 @@
+from assign_category import assign_category
+from utils import (
+    clean_website,
+    get_network_location,
+    calculate_time_spends,
+    get_network,
+)
 import networkx as nx
 from datetime import timedelta
 import os
@@ -6,15 +13,6 @@ import holoviews as hv
 from holoviews import opts, dim
 from bokeh.models import HoverTool
 hv.extension('bokeh')
-
-
-from utils import (
-    clean_website,
-    get_network_location,
-    calculate_time_spends,
-    get_network,
-)
-from assign_category import assign_category
 
 
 def get_sources_targets(data_frame):
@@ -70,7 +68,8 @@ def create_sankey(file, time_spend):
 
 
 def create_chord(file, sources_targets):
-    counts = sources_targets.groupby(['source', 'target']).count().reset_index()
+    counts = sources_targets.groupby(
+        ['source', 'target']).count().reset_index()
     nodes = hv.Dataset(sources_targets[['source', 'target']])
     chord = hv.Chord((counts, nodes), ['source', 'target']).opts(
         title=f'Chord-Diagram-{file.split(".")[0]}',
@@ -120,27 +119,27 @@ def create_visualization_data(filtered_all_frames):
     visualization_data = pd.DataFrame()
     visualization_data['Start'] = pd.concat(
         [filtered_all_frames['Start'],
-        filtered_all_frames['Web_site']],
+         filtered_all_frames['Web_site']],
         ignore_index=True,
     )
     visualization_data['End'] = pd.concat(
         [filtered_all_frames['Web_site'],
-        filtered_all_frames['Participent']],
+         filtered_all_frames['Participent']],
         ignore_index=True,
     )
     visualization_data['Web_site'] = pd.concat(
         [filtered_all_frames['Web_site'],
-        filtered_all_frames['Web_site']],
+         filtered_all_frames['Web_site']],
         ignore_index=True,
     )
     visualization_data['Percentage'] = pd.concat(
         [filtered_all_frames['Percentage'],
-        filtered_all_frames['Percentage']],
+         filtered_all_frames['Percentage']],
         ignore_index=True,
     )
     visualization_data['timedelta'] = pd.concat(
         [filtered_all_frames['timedelta'],
-        filtered_all_frames['timedelta']],
+         filtered_all_frames['timedelta']],
         ignore_index=True,
     )
     return visualization_data

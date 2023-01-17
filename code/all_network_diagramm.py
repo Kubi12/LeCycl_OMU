@@ -1,51 +1,47 @@
+from post_survey_analysis import get_usefull_websites
 from collections import Counter
 import networkx as nx
-from random import randrange
 import os
 import pandas as pd
-from urllib.parse import urlparse
-from bokeh.plotting import show, figure
-from bokeh.models import Legend, LegendItem
+from bokeh.plotting import show, figure, from_networkx
+from bokeh.models import Ellipse, GraphRenderer, StaticLayoutProvider, Legend, Renderer, LegendItem
+from bokeh.models import (BoxSelectTool, Circle, EdgesAndLinkedNodes,
+                          HoverTool, MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool)
+from bokeh.palettes import Spectral8, inferno, viridis, Spectral4
 
-from assign_category import assign_category
+
 from utils import (
-    clean_website,
-    get_category,
     calculate_time_spends,
     get_network_location,
     get_random_color,
 )
-
-
 TOOLS = "pan,wheel_zoom,box_zoom,reset,save,box_select,hover"
 
 
-def add_category_most_visited(file, most_visited, current_category, next_category):
+def add_websites_most_visited(file, most_visited, current_web_site, next_web_site):
     try:
-        if current_category:
+        if current_web_site:
             most_visited[
                 f'{file.split(".")[0]}'
-            ].append(current_category)
+            ].append(current_web_site)
     except KeyError:
-        if current_category:
+        if current_web_site:
             most_visited[
-                f'{file.split(".")[0]}'] = [current_category]
+                f'{file.split(".")[0]}'] = [current_web_site]
     try:
-        if next_category:
+        if next_web_site:
             most_visited[
-                f'{file.split(".")[0]}'].append(next_category)
+                f'{file.split(".")[0]}'].append(next_web_site)
     except KeyError:
-        if next_category:
+        if next_web_site:
             most_visited[
-                f'{file.split(".")[0]}'] = [next_category]
+                f'{file.split(".")[0]}'] = [next_web_site]
 
 
-def get_sources_targets_for(file, visits, most_visited, websites_categories):
+def get_sources_targets_for(file, visits, most_visited):
     data_frame = pd.read_csv(file)
-    data_frame['Web_site'] = data_frame['Tab_URL'].apply(get_network_location)
-    data_frame['Web_site'] = data_frame['Web_site'].apply(clean_website)
-    data_frame['category'] = data_frame['Web_site'].apply(
-        lambda x: get_category(websites_categories, x)
+    data_frame['Web_site'] = data_frame['Tab_URL'].apply(
+        get_network_location
     )
     time_spend = calculate_time_spends(data_frame)
     data_frame['time_spend'] = pd.Series(time_spend)
@@ -53,51 +49,42 @@ def get_sources_targets_for(file, visits, most_visited, websites_categories):
     for index, item in enumerate(data_frame.itertuples()):
         if index == 0:
             continue
-        current_category, next_category = (
-            data_frame['category'][index-1],
-            item.category,
+        current_web_site, next_web_site = (
+            data_frame['Web_site'][index-1],
+            item.Web_site,
         )
-        add_category_most_visited(
-            file,
-            most_visited,
-            current_category,
-            next_category,
-        )
-        if current_category == next_category:
+        add_websites_most_visited(
+            file, most_visited, current_web_site, next_web_site)
+        if current_web_site == next_web_site:
             if sources_targets:
                 sources_targets[-1][-1] += float(
                     data_frame['time_spend'][index]
                 )
                 continue
-        if current_category and next_category:
-            visits.append(f'{current_category}>{next_category}')
+        if current_web_site and next_web_site:
+            visits.append(f'{current_web_site}>{next_web_site}')
             sources_targets.append([
-                data_frame['category'][index-1],
-                item.category,
+                data_frame['Web_site'][index-1],
+                item.Web_site,
                 data_frame['time_spend'][index-1],
             ])
     sources_targets = pd.DataFrame(sources_targets)
     sources_targets = sources_targets.rename(
-        columns={0: 'source', 1: 'target', 2: 'value',},
+        columns={0: 'source', 1: 'target', 2: 'value', },
     )
     sources_targets = sources_targets.dropna()
     return sources_targets
 
 
-def get_sources_targets(websites_categories):
-    frames = []
+def get_sources_targets():
     visits = []
+    frames = []
     most_visited = {}
+
     for file in os.listdir():
         if len(file.split('.')) == 2 and file.split('.')[1] == 'csv':
-            frames.append(
-                get_sources_targets_for(
-                    file,
-                    visits,
-                    most_visited,
-                    websites_categories,
-                )
-            )
+            frames.append(get_sources_targets_for(file, visits, most_visited))
+
     return frames, visits, most_visited
 
 
@@ -121,17 +108,27 @@ def group_renderers(renderers):
 def draw_nodes(
     figure_,
     graph_data_frame,
-    common_categories_frequency,
+    common_websites_frequency,
+    usefull_websites,
 ):
-    for category in graph_data_frame:
-        figure_.circle(
-            x=graph_data_frame[category][0],
-            y=graph_data_frame[category][1],
-            name=category,
-            size=5*common_categories_frequency[category],
-            line_width=0,
-            fill_color=get_random_color(),
-        )
+    for website in graph_data_frame:
+        if website in usefull_websites:
+            figure_.circle_dot(
+                x=graph_data_frame[website][0],
+                y=graph_data_frame[website][1],
+                name=website,
+                size=5*common_websites_frequency[website],
+                fill_color=get_random_color(),
+            )
+        else:
+            figure_.circle(
+                x=graph_data_frame[website][0],
+                y=graph_data_frame[website][1],
+                name=website,
+                size=5*common_websites_frequency[website],
+                line_width=0,
+                fill_color=get_random_color(),
+            )
     return True
 
 
@@ -151,39 +148,63 @@ def draw_edges(figure_, graph_data_frame, edges, number_visits):
     return True
 
 
-def get_network(sources_targets):
+def get_network(sources_targets, most_common_websites):
     graph_nx = nx.DiGraph()
-    graph_nx.add_nodes_from(sources_targets['source'].drop_duplicates())
+    for source in sources_targets['source'].drop_duplicates():
+        if source in most_common_websites:
+            graph_nx.add_node(source)
     for edge in sources_targets.itertuples():
-        graph_nx.add_edge(
-            edge.source,
-            edge.target,
-        )
+        if edge.source in most_common_websites and edge.target in most_common_websites:
+            graph_nx.add_edge(
+                edge.source,
+                edge.target,
+            )
     return graph_nx
+
+
+def get_most_common_website_participents(most_visited):
+    common_websites = []
+
+    for key in most_visited.keys():
+        most_visited[key] = Counter(most_visited[key])
+        common_websites += most_visited[key].keys()
+
+    common_websites_frequencies = Counter(common_websites)
+
+    cut_off = int(
+        input(
+            'The cutoff value for the number of participent: '
+        )
+    )
+    most_common_websites = [
+        website for website, frequency in common_websites_frequencies.items()
+        if frequency >= cut_off
+    ]
+    return most_common_websites, common_websites_frequencies
 
 
 if __name__ == "__main__":
     # os.chdir(os.getcwd() + os.sep + 'Datenanalyse/Persona')
-    websites_categories = assign_category()
+    post_survey = pd.read_csv('data/post_survey.csv')
+    usefull_websites = set(get_usefull_websites(post_survey))
     os.chdir(os.getcwd() + os.sep + 'Persona')
 
-    frames, visits, most_visited = get_sources_targets(websites_categories)
+    frames, visits, most_visited = get_sources_targets()
+
+    (
+        most_common_websites,
+        common_websites_frequencies
+    ) = get_most_common_website_participents(most_visited)
+
     sources_targets = pd.concat(frames)
-    common_categories = []
-
-    for key in most_visited.keys():
-        most_visited[key] = Counter(most_visited[key])
-        common_categories += most_visited[key].keys()
-
-    common_categories_frequencies = Counter(common_categories)
     number_visits = Counter(visits)
-    graph_nx = get_network(sources_targets)
+    graph_nx = get_network(sources_targets, most_common_websites)
     graph_data_frame = pd.DataFrame(nx.spring_layout(graph_nx, scale=2))
 
     figure_ = figure(
-        title=f"Graph TOBEFILLED",
-        x_range=(-2.1,2.1),
-        y_range=(-2.1,2.1),
+        title=f"Graph Usefullwebpages",
+        x_range=(-2.1, 2.1),
+        y_range=(-2.1, 2.1),
         x_axis_location=None,
         y_axis_location=None,
         tools=TOOLS,
@@ -211,7 +232,8 @@ if __name__ == "__main__":
     draw_nodes(
         figure_,
         graph_data_frame,
-        common_categories_frequencies,
+        common_websites_frequencies,
+        usefull_websites,
     )
 
     renderer_groups = group_renderers(figure_.renderers)
@@ -229,6 +251,6 @@ if __name__ == "__main__":
     figure_.legend.click_policy = 'hide'
     figure_.legend.location = 'right'
     figure_.legend.orientation = 'vertical'
-    figure_.legend.background_fill_alpha=.6
+    figure_.legend.background_fill_alpha = .6
     figure_.output_backend = 'svg'
     show(figure_)

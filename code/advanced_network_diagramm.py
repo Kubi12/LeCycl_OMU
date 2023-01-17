@@ -6,7 +6,8 @@ import pandas as pd
 from urllib.parse import urlparse
 from bokeh.plotting import show, figure, from_networkx
 from bokeh.models import Ellipse, GraphRenderer, StaticLayoutProvider, Legend, Renderer, LegendItem, LabelSet, OpenHead
-from bokeh.models import (Line, BoxSelectTool, Circle, EdgesAndLinkedNodes, HoverTool, MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool, Arrow)
+from bokeh.models import (Line, BoxSelectTool, Circle, EdgesAndLinkedNodes,
+                          HoverTool, MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool, Arrow)
 from bokeh.palettes import Spectral8, inferno, viridis, Spectral4
 from bokeh.layouts import grid
 
@@ -18,7 +19,8 @@ def calculate_time_spends(data_frame):
     actual_time = pd.to_datetime(data_frame['DateUTC'][0])
 
     for i in range(len(data_frame)):
-        time_spend.append((pd.to_datetime(data_frame['DateUTC'][i]) - actual_time).total_seconds() / 60)
+        time_spend.append(
+            (pd.to_datetime(data_frame['DateUTC'][i]) - actual_time).total_seconds() / 60)
         actual_time = pd.to_datetime(data_frame['DateUTC'][i])
 
     return time_spend
@@ -28,6 +30,7 @@ def get_network_location(url):
     components = urlparse(url)
     if components.scheme == 'https' or components.scheme == 'http':
         return components.netloc
+
 
 if __name__ == "__main__":
     # os.chdir(os.getcwd() + os.sep + 'Datenanalyse/Persona')
@@ -40,7 +43,8 @@ if __name__ == "__main__":
     for file in os.listdir():
         if len(file.split('.')) == 2 and file.split('.')[1] == 'csv':
             data_frame = pd.read_csv(file)
-            data_frame['Web_site'] = data_frame['Tab_URL'].apply(get_network_location)
+            data_frame['Web_site'] = data_frame['Tab_URL'].apply(
+                get_network_location)
             time_spend = calculate_time_spends(data_frame)
             data_frame['time_spend'] = pd.Series(time_spend)
             visits = []
@@ -73,7 +77,7 @@ if __name__ == "__main__":
             number_visits = Counter(visits)
             sources_targets = pd.DataFrame(sources_targets)
             sources_targets = sources_targets.rename(
-                columns={0: 'source', 1: 'target', 2: 'value',},
+                columns={0: 'source', 1: 'target', 2: 'value', },
             )
             sources_targets = sources_targets.dropna()
 
@@ -87,8 +91,8 @@ if __name__ == "__main__":
 
             figure_ = figure(
                 title=f"Graph {file.split('.')[0]}",
-                x_range=(-2.1,2.1),
-                y_range=(-2.1,2.1),
+                x_range=(-2.1, 2.1),
+                y_range=(-2.1, 2.1),
                 x_axis_location=None,
                 y_axis_location=None,
                 tools=TOOLS,
@@ -105,7 +109,8 @@ if __name__ == "__main__":
             figure_.hover.point_policy = 'follow_mouse'
             figure_.hover.line_policy = 'next'
             figure_.grid.grid_line_color = None
-            graph_data_frame = pd.DataFrame(nx.spring_layout(graph_nx, scale=2))
+            graph_data_frame = pd.DataFrame(
+                nx.spring_layout(graph_nx, scale=2))
 
             def get_random_hex():
                 return hex(randrange(17, 255))[2:].upper()
@@ -160,9 +165,9 @@ if __name__ == "__main__":
             figure_.legend.click_policy = 'hide'
             figure_.legend.location = 'right'
             figure_.legend.orientation = 'vertical'
-            figure_.legend.background_fill_alpha=.6
+            figure_.legend.background_fill_alpha = .6
             figure_.output_backend = 'svg'
             figures.append(figure_)
 
-    grid = grid(figures, nrows= 3)
+    grid = grid(figures, nrows=3)
     show(grid)
